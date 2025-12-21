@@ -2,16 +2,5 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
   "workspace": { "enabled": true },
-  "ignoreDeps": ["@workspace/*"],
-  "packageRules": [
-    {
-      "matchPackageNames": ["bun"],
-      "enabled": true,
-      "groupName": "bun runtime"
-    },
-    {
-      "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "all non-major updates"
-    }
-  ]
+  "ignoreDeps": ["@workspace/*"]
 }
