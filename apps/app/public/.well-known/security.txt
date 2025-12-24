@@ -1,0 +1,5 @@
+Contact: mailto:security@dugble.com
+Expires: 2026-10-21T23:22:00Z
+Preferred-Languages: en
+Canonical: https://dugble.com/.well-known/security.txt
+Policy: https://dugble.com/security
