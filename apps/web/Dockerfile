@@ -9,7 +9,7 @@ WORKDIR /app
 # --------------------------
 FROM base AS prepare
 
-COPY package.json bun.lockb turbo.json ./
+COPY package.json bun.lock turbo.json ./
 COPY apps/web ./apps/web
 COPY packages ./packages
 
