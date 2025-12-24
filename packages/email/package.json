@@ -12,7 +12,7 @@
     "@react-email/markdown": "^0.0.17",
     "@react-email/render": "^2.0.0",
     "date-fns": "^4.1.0",
-    "lucide-react": "^0.462.0",
+    "lucide-react": "^0.562.0",
     "nodemailer": "^7.0.0",
     "react-email": "^5.1.0",
     "resend": "6.6.0"
