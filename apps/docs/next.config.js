@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ["@dugble/ui"],
+	transpilePackages: ["@dugble/ui"],
 };
 
 export default nextConfig;

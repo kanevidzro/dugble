@@ -1,8 +1,8 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.10/schema.json",
-  "root": false,
-  "extends": [
-    "@dugble/biome-config/base",
-    "@dugble/biome-config/react-internal"
-  ]
+	"$schema": "https://biomejs.dev/schemas/2.3.10/schema.json",
+	"root": false,
+	"extends": [
+		"@dugble/biome-config/base",
+		"@dugble/biome-config/react-internal"
+	]
 }

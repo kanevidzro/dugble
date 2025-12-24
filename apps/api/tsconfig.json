@@ -1,14 +1,14 @@
 {
-  "extends": "@dugble/tsconfig/base.json",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@dugble/prisma": ["../../packages/prisma/src"]
-    },
-    "strict": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx"
-  },
-  "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+	"extends": "@dugble/tsconfig/base.json",
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"@dugble/prisma": ["../../packages/prisma/src"]
+		},
+		"strict": true,
+		"jsx": "react-jsx",
+		"jsxImportSource": "hono/jsx"
+	},
+	"include": ["**/*.ts", "**/*.tsx"],
+	"exclude": ["node_modules"]
 }

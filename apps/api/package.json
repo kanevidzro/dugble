@@ -1,21 +1,21 @@
 {
-  "name": "api",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "bun run --hot server.ts",
-    "build": "bun build server.ts --outdir=./dist --target=bun",
-    "start": "bun ./dist/server.js",
-    "lint": "biome check --write"
-  },
-  "dependencies": {
-    "@dugble/prisma": "*",
-    "hono": "^4.11.1"
-  },
-  "devDependencies": {
-    "@types/bun": "latest",
-    "@dugble/biome-config": "*",
-    "@dugble/tsconfig": "*",
-    "typescript": "5.9.3"
-  }
+	"name": "api",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "bun run --hot server.ts",
+		"build": "bun build server.ts --outdir=./dist --target=bun",
+		"start": "bun ./dist/server.js",
+		"lint": "biome check --write"
+	},
+	"dependencies": {
+		"@dugble/prisma": "*",
+		"hono": "^4.11.1"
+	},
+	"devDependencies": {
+		"@types/bun": "latest",
+		"@dugble/biome-config": "*",
+		"@dugble/tsconfig": "*",
+		"typescript": "5.9.3"
+	}
 }

@@ -1,23 +1,23 @@
 {
-  "$schema": "https://ui.shadcn.com/schema.json",
-  "style": "base-mira",
-  "rsc": true,
-  "tsx": true,
-  "tailwind": {
-    "config": "",
-    "css": "../../packages/ui/src/styles/globals.css",
-    "baseColor": "zinc",
-    "cssVariables": true
-  },
-  "iconLibrary": "hugeicons",
-  "aliases": {
-    "components": "@/components",
-    "hooks": "@/hooks",
-    "lib": "@/lib",
-    "utils": "@dugble/ui/lib/utils",
-    "ui": "@dugble/ui/components"
-  },
-  "menuColor": "default",
-  "menuAccent": "subtle",
-  "registries": {}
+	"$schema": "https://ui.shadcn.com/schema.json",
+	"style": "base-mira",
+	"rsc": true,
+	"tsx": true,
+	"tailwind": {
+		"config": "",
+		"css": "../../packages/ui/src/styles/globals.css",
+		"baseColor": "zinc",
+		"cssVariables": true
+	},
+	"iconLibrary": "hugeicons",
+	"aliases": {
+		"components": "@/components",
+		"hooks": "@/hooks",
+		"lib": "@/lib",
+		"utils": "@dugble/ui/lib/utils",
+		"ui": "@dugble/ui/components"
+	},
+	"menuColor": "default",
+	"menuAccent": "subtle",
+	"registries": {}
 }
