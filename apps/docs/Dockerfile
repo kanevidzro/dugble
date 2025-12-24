@@ -34,7 +34,7 @@ RUN bun install --production
 COPY --from=prepare /app/out/full/ ./
 
 # Build only the docs app
-RUN bun turbo run build --filter=docs...
+RUN bun turbo run build
 
 # --------------------------
 # Runner

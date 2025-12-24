@@ -35,7 +35,7 @@ RUN bun install --production
 COPY --from=prepare /app/out/full/ ./
 
 # Build only the API
-RUN bun turbo run build --filter=api...
+RUN bun turbo run build
 
 # --------------------------
 # Runner

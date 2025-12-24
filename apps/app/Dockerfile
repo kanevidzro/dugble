@@ -34,7 +34,7 @@ RUN bun install --production
 COPY --from=prepare /app/out/full/ ./
 
 # Build only the app app
-RUN bun turbo run build --filter=app...
+RUN bun turbo run build
 
 # --------------------------
 # Runner
