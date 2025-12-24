@@ -1,7 +1,7 @@
 # --------------------------
 # Base image
 # --------------------------
-FROM oven/bun:1.1 AS base
+FROM oven/bun:1.3 AS base
 WORKDIR /app
 
 # --------------------------
@@ -39,7 +39,7 @@ RUN bun turbo run build --filter=web...
 # --------------------------
 # Runner
 # --------------------------
-FROM oven/bun:1.1-slim AS runner
+FROM oven/bun:1.3-slim AS runner
 WORKDIR /app
 
 # Copy production node_modules and built web app
