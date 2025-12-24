@@ -1,5 +1,5 @@
 {
-  "name": "@workspace/db",
+  "name": "@dugble/prisma",
   "version": "0.0.0",
   "scripts": {
     "db:generate": "prisma generate",

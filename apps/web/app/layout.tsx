@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
-import "@workspace/ui/globals.css";
-import { Providers } from "@workspace/ui/providers";
+import "@dugble/ui/globals.css";
+import { Providers } from "@dugble/ui/providers";
 
 const fontSans = Geist({
   subsets: ["latin"],

@@ -1,11 +1,11 @@
 {
-	"extends": "@workspace/typescript-config/react-library.json",
-	"compilerOptions": {
-		"baseUrl": ".",
-		"paths": {
-			"@workspace/ui/*": ["./src/*"]
-		}
-	},
-	"include": ["."],
-	"exclude": ["node_modules", "dist"]
+  "extends": "@dugble/tsconfig/react-library.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@dugble/ui/*": ["./src/*"]
+    }
+  },
+  "include": ["."],
+  "exclude": ["node_modules", "dist"]
 }
