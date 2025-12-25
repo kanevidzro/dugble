@@ -36,19 +36,19 @@ services:
     networks:
       - dugble-net
 
-  app:
-    container_name: dugble-app
+  dash:
+    container_name: dugble-dash
     build:
       context: .
-      dockerfile: ./apps/app/Dockerfile
+      dockerfile: ./apps/dash/Dockerfile
     restart: always
     environment:
       - NODE_ENV=production
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.app.rule=Host(`app.dugble.com`)"
-      - "traefik.http.routers.app.entrypoints=websecure"
-      - "traefik.http.routers.app.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.dash.rule=Host(`dash.dugble.com`)"
+      - "traefik.http.routers.dash.entrypoints=websecure"
+      - "traefik.http.routers.dash.tls.certresolver=letsencrypt"
     networks:
       - dugble-net
 
