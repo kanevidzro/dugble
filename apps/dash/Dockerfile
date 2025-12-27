@@ -25,6 +25,5 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/dash/.next ./apps/dash/.next
 COPY --from=builder /app/package.json ./package.json
 
-ENV PORT=3001
 EXPOSE 3001
-CMD ["bun", "apps/dash/node_modules/.bin/next", "start", "-p", "3001"]
+CMD ["bun", "start"]
