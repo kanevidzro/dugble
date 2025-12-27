@@ -21,7 +21,7 @@ FROM installer AS builder
 COPY --from=pruner /app/out/full/ .
 COPY turbo.json turbo.json
 # Build using the filter to only process the specific app
-RUN bunx turbo build --filter=web
+RUN bunx turbo build --filter=docs
 
 # Stage 5: Runner - Production image
 FROM base AS runner
