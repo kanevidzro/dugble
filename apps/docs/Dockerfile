@@ -25,6 +25,5 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/docs/.next ./apps/docs/.next
 COPY --from=builder /app/package.json ./package.json
 
-ENV PORT=3002
 EXPOSE 3002
-CMD ["bun", "apps/docs/node_modules/.bin/next", "start", "-p", "3002"]
+CMD ["bun", "start"]
