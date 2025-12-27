@@ -12,12 +12,8 @@ COPY package.json bun.lock turbo.json ./
 COPY apps/api ./apps/api
 COPY packages ./packages
 
-# Install dev dependencies for pruning
-RUN bun install
-RUN bun install turbo --global
-
-# Prune API only
-RUN bun turbo prune api --docker
+# Use bun x to avoid needing a global install in this stage
+RUN bun x turbo prune api --docker
 
 # --------------------------
 # Builder
@@ -25,16 +21,15 @@ RUN bun turbo prune api --docker
 FROM base AS builder
 WORKDIR /app
 
+# 1. Copy pruned locks and package.json files
 COPY --from=prepare /app/out/json/ ./
-RUN bun install --production
+RUN bun install
 
+# 2. Copy the full source (only for the necessary workspaces)
 COPY --from=prepare /app/out/full/ ./
 
-# Install turbo globally in builder stage
-RUN bun install turbo --global
-
-# Build API
-RUN bun turbo run build --filter=api...
+# 3. Build using bun x to ensure turbo is found regardless of PATH
+RUN bun x turbo run build --filter=api...
 
 # --------------------------
 # Runner
@@ -42,9 +37,16 @@ RUN bun turbo run build --filter=api...
 FROM oven/bun:1.3-slim AS runner
 WORKDIR /app
 
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/apps/api/dist ./apps/api/dist
-COPY --from=builder /app/package.json ./package.json
+# Set production environment
+ENV NODE_ENV=production
 
+# Copy only what's needed to run the app
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/apps/api/dist ./dist
+COPY --from=builder /app/apps/api/package.json ./package.json
+
+# Ensure the port matches your API configuration
 EXPOSE 8080
-CMD ["bun", "apps/api/dist/server.js"]
+
+# Run the compiled code directly with Bun
+CMD ["bun", "run", "dist/server.js"]
