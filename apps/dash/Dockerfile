@@ -1,51 +1,36 @@
-# --------------------------
-# Base image
-# --------------------------
-FROM oven/bun:1.3 AS base
+# Stage 1: Base image
+FROM oven/bun:1-alpine AS base
 WORKDIR /app
 
-# --------------------------
-# Prepare minimal context
-# --------------------------
-FROM base AS prepare
-COPY package.json bun.lock turbo.json ./
-COPY apps/dash ./apps/dash
-COPY packages ./packages
+# Stage 2: Prune the monorepo
+FROM base AS pruner
+# Installing turbo globally is no longer strictly required if using bunx
+COPY . .
+RUN bunx turbo prune dash --docker
 
-# Use bun x to avoid path issues during pruning
-RUN bun x turbo prune dash --docker
+# Stage 3: Installer - Install only necessary dependencies
+FROM base AS installer
+# Copy pruned package files and lockfile (ensures cache-hit on subsequent builds)
+COPY --from=pruner /app/out/json/ .
+COPY --from=pruner /app/out/bun.lock ./bun.lock
+RUN bun install --frozen-lockfile
 
-# --------------------------
-# Builder
-# --------------------------
-FROM base AS builder
-WORKDIR /app
+# Stage 4: Builder - Build the application
+# Start from installer to keep node_modules
+FROM installer AS builder
+COPY --from=pruner /app/out/full/ .
+COPY turbo.json turbo.json
+# Build using the filter to only process the specific app
+RUN bunx turbo build --filter=dash
 
-# 1. Copy pruned package files
-COPY --from=prepare /app/out/json/ ./
-# IMPORTANT: Remove --production here because build tools (turbo) are devDependencies
-RUN bun install
+# Stage 5: Runner - Production image
+FROM base AS runner
+# Copy built app and dependencies from builder stage
+COPY --from=builder /app/apps/dash/node_modules ./node_modules
+COPY --from=builder /app/apps/dash/package.json ./package.json
 
-# 2. Copy the full source
-COPY --from=prepare /app/out/full/ ./
-
-# 3. Build using bun x (Fixes the "Script not found" error)
-RUN bun x turbo run build --filter=dash...
-
-# --------------------------
-# Runner
-# --------------------------
-FROM oven/bun:1.3-slim AS runner
-WORKDIR /app
-ENV NODE_ENV=production
-
-# Copy node_modules and built assets
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/apps/dash/.next ./apps/dash/.next
-COPY --from=builder /app/apps/dash/public ./apps/dash/public
-COPY --from=builder /app/package.json ./package.json
+# Adjust this path based on your framework (e.g., .next for Next.js, dist for Vite/Nest)
+COPY --from=builder /app/apps/dash/.next ./.next
 
 EXPOSE 3001
-
-# Start the application using the local workspace script
 CMD ["bun", "run", "start"]
