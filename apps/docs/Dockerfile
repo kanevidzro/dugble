@@ -1,54 +1,36 @@
-# --------------------------
-# Base image
-# --------------------------
-FROM oven/bun:1.3 AS base
+# Stage 1: Base image
+FROM oven/bun:1-alpine AS base
 WORKDIR /app
 
-# --------------------------
-# Prepare minimal context using turbo prune
-# --------------------------
-FROM base AS prepare
-COPY package.json bun.lock turbo.json ./
-COPY apps/docs ./apps/docs
-COPY packages ./packages
+# Stage 2: Prune the monorepo
+FROM base AS pruner
+# Installing turbo globally is no longer strictly required if using bunx
+COPY . .
+RUN bunx turbo prune docs --docker
 
-# Use bun x to run turbo without needing a global install
-RUN bun x turbo prune docs --docker
+# Stage 3: Installer - Install only necessary dependencies
+FROM base AS installer
+# Copy pruned package files and lockfile (ensures cache-hit on subsequent builds)
+COPY --from=pruner /app/out/json/ .
+COPY --from=pruner /app/out/bun.lock ./bun.lock
+RUN bun install --frozen-lockfile
 
-# --------------------------
-# Builder
-# --------------------------
-FROM base AS builder
-WORKDIR /app
+# Stage 4: Builder - Build the application
+# Start from installer to keep node_modules
+FROM installer AS builder
+COPY --from=pruner /app/out/full/ .
+COPY turbo.json turbo.json
+# Build using the filter to only process the specific app
+RUN bunx turbo build --filter=web
 
-# 1. Copy pruned locks and package.json files
-COPY --from=prepare /app/out/json/ ./
-# Install ALL dependencies (including devDeps needed for building)
-RUN bun install
+# Stage 5: Runner - Production image
+FROM base AS runner
+# Copy built app and dependencies from builder stage
+COPY --from=builder /app/apps/docs/node_modules ./node_modules
+COPY --from=builder /app/apps/docs/package.json ./package.json
 
-# 2. Copy the full source code
-COPY --from=prepare /app/out/full/ ./
-
-# 3. Build using bun x (Solves the "Script not found" error)
-RUN bun x turbo run build --filter=docs...
-
-# --------------------------
-# Runner
-# --------------------------
-FROM oven/bun:1.3-slim AS runner
-WORKDIR /app
-
-ENV NODE_ENV=production
-
-# Copy only the necessary production artifacts
-COPY --from=builder /app/node_modules ./node_modules
-# Note: For Next.js, you usually need the .next folder and public files
-COPY --from=builder /app/apps/docs/.next ./apps/docs/.next
-COPY --from=builder /app/apps/docs/public ./apps/docs/public
-COPY --from=builder /app/package.json ./package.json
+# Adjust this path based on your framework (e.g., .next for Next.js, dist for Vite/Nest)
+COPY --from=builder /app/apps/docs/.next ./.next
 
 EXPOSE 3002
-
-# Run the app
-CMD ["bun", "run", "start"] 
-# Alternatively, if you have a start script: CMD ["bun", "start", "--prefix", "apps/docs"]
+CMD ["bun", "run", "start"]
