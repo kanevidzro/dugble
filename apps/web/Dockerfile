@@ -1,51 +1,30 @@
-# --------------------------
-# Base image
-# --------------------------
-FROM oven/bun:1.3 AS base
+# Stage 1: Base image
+FROM oven/bun:1-alpine AS base
 WORKDIR /app
 
-# --------------------------
-# Prepare minimal context
-# --------------------------
-FROM base AS prepare
-COPY package.json bun.lock turbo.json ./
-COPY apps/web ./apps/web
-COPY packages ./packages
+# Stage 2: Prune (if not done outside Docker)
+FROM base AS pruner
+RUN bun add -g turbo
+COPY . .
+RUN turbo prune web --docker
 
-# Use bun x to prune without needing a global install
-RUN bun x turbo prune web --docker
+# Stage 3: Installer
+FROM base AS installer
+COPY --from=pruner /app/out/json/ .
+# Install dependencies using the pruned lockfile
+RUN bun install --frozen-lockfile
 
-# --------------------------
-# Builder
-# --------------------------
-FROM base AS builder
-WORKDIR /app
+# Stage 4: Builder
+COPY --from=pruner /app/out/full/ .
+COPY turbo.json turbo.json
+RUN bun x turbo build --filter=web
 
-# 1. Copy pruned package files
-COPY --from=prepare /app/out/json/ ./
-# Install ALL dependencies (build needs devDependencies like turbo/compilers)
-RUN bun install
-
-# 2. Copy the full source
-COPY --from=prepare /app/out/full/ ./
-
-# 3. Build using bun x (Solves the "Script not found" error)
-RUN bun x turbo run build --filter=web...
-
-# --------------------------
-# Runner
-# --------------------------
-FROM oven/bun:1.3-slim AS runner
-WORKDIR /app
-ENV NODE_ENV=production
-
-# Copy node_modules and built assets
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/apps/web/.next ./apps/web/.next
-COPY --from=builder /app/apps/web/public ./apps/web/public
-COPY --from=builder /app/package.json ./package.json
+# Stage 5: Runner
+FROM base AS runner
+COPY --from=installer /app/apps/web/node_modules ./node_modules
+COPY --from=installer /app/apps/web/package.json ./package.json
+# Copy build output (adjust path based on your framework, e.g., .next or dist)
+COPY --from=builder /app/apps/web/.next ./.next 
 
 EXPOSE 3000
-
-# Start the application
 CMD ["bun", "run", "start"]
