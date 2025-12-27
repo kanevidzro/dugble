@@ -26,4 +26,4 @@ COPY --from=builder /app/apps/web/.next ./apps/web/.next
 COPY --from=builder /app/package.json ./package.json
 
 EXPOSE 3000
-CMD ["bun", "apps/web/node_modules/.bin/next", "start", "-p", "3000"]
+CMD ["bun", "start"]
