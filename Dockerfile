@@ -1,5 +1,5 @@
 # STAGE 1: Base
-FROM oven/bun:1.2-alpine AS base
+FROM oven/bun:1.3-alpine AS base
 # Prisma 7+ needs openssl for certain providers; libc6 for general compatibility
 RUN apk add --no-cache openssl libc6-compat
 WORKDIR /app
